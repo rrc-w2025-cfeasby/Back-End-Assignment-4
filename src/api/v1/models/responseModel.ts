@@ -14,3 +14,16 @@ export const errorResponse = (message: string, code: string) => ({
     },
     timestamp: new Date().toISOString(),
 });
+
+/**
+ * Success Response
+ * 
+ */
+export function successResponse(data: unknown, message: string) {
+    return {
+        success: true,
+        message,
+        data,
+        timestamp: new Date().toISOString()
+    };
+}
