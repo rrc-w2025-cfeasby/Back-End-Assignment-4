@@ -1,7 +1,21 @@
 import express from "express";
+import loanRoutes from "./api/v1/routes/loanRoutes";
 
 const app = express();
 app.use(express.json());
+
+// Health Route
+app.get("/api/v1/health", (req, res) => {
+  res.json({
+    status: "OK",
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    version: "1.0.0"
+  });
+});
+
+// Loan routes
+app.use("/api/v1", loanRoutes);
 
 // Logging middleware (should be applied early in the middleware stack)
 if (process.env.NODE_ENV === "production") {
@@ -22,6 +36,7 @@ app.use(express.json());
 app.get("/", (req, res) => {
     res.send("Hello, World!");
 });
+
 
 
 // Global error handling middleware (MUST be applied last)
