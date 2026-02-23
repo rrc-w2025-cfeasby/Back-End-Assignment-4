@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
 
 // Data to work with
-let loans = [
-  { id: 1, applicant: "John Smith", amount: 50000, status: "pending" },
-  { id: 2, applicant: "Sarah Johnson", amount: 150000, status: "under_review" },
+export const loans = [
+  { id: 1, userId: "18DvvNLjCGQ9XDU4FIcwFMSyb8M2", applicant: "John Smith", amount: 50000, status: "pending" },
+  { id: 2, userId: "TePTOIxxtkQp8FIu3kMOocpiP752", applicant: "Sarah Johnson", amount: 150000, status: "under_review" },
 ];
 
 /**
@@ -43,6 +43,7 @@ export function getLoanById(req: Request, res: Response): void {
 export function createLoan(req: Request, res: Response): void {
     const newLoan = {
         id: loans.length + 1,
+        userId: res.locals.uid,
         ... req.body
     };
 
@@ -89,4 +90,44 @@ export function deleteLoan(req: Request, res: Response): void {
     const deleted = loans.splice(index, 1);
 
     res.status(200).json({success: true, data: deleted[0]});
+}
+
+/**
+ * Approve loan
+ * 
+ * @param req: Request object
+ * @param res: Response object
+ */
+export function approveLoan(req: Request, res: Response): void {
+    const loan_id = Number(req.params.id);
+    const index = loans.findIndex((loan) => loan.id === loan_id);
+
+    if(index === -1){
+        res.status(404).json({ success: false, message: "Loan not found" });
+        return;
+    }
+
+    loans[index].status = "approved";
+
+    res.status(200).json({ success: true, message: "Loan approved successfully", data: loans[index]});    
+}
+
+/**
+ * Deny loan
+ * 
+ * @param req: Request object
+ * @param res: Response object
+ */
+export function denyLoan(req: Request, res: Response): void {
+    const loan_id = Number(req.params.id);
+    const index = loans.findIndex((loan) => loan.id === loan_id);
+
+    if(index === -1){
+        res.status(404).json({ success: false, message: "Loan not found" });
+        return;
+    }
+
+    loans[index].status = "denied";
+
+    res.status(200).json({ success: true, message: "Loan denied successfully", data: loans[index]});    
 }
